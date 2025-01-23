@@ -141,7 +141,7 @@ bool test_conclude(struct test *test, FILE *output) {
         struct test_case const *c = &test->cases[i];
         fprintf(output, "%*zu | %s | %*u | %-*s | %-*s |\n",
             (int)col_len_num, i,
-            c->ok ? "\e[32;49mOK\e[39;49m" : "\e[31;49mKO\e[39;49m",
+            c->ok ? "\033[32;49mOK\033[39;49m" : "\033[31;49mKO\033[39;49m",
             (int)col_len_line, c->line,
             (int)col_len_expr, c->expr,
             (int)col_len_name, c->name);
@@ -157,7 +157,7 @@ bool test_conclude(struct test *test, FILE *output) {
         nb_ko,
         nb_ok,
         nb_ko + nb_ok,
-        success ? "\e[32;49msuccess\e[39;49m" : "\e[31;49mfailure\e[39;49m");
+        success ? "\033[32;49msuccess\033[39;49m" : "\033[31;49mfailure\033[39;49m");
 
     // Deallocate
 
