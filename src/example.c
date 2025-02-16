@@ -185,7 +185,7 @@ void test_add_quad(void)
         }
     }
 
-    test_conclude(&t, stdout);
+    test_end(&t, stdout);
 #undef SZ
 }
 
