@@ -13,6 +13,21 @@
 #define STB_TEST_DEFINITION
 #endif
 
+#ifndef STB_TEST_ANSI_OK
+/// @brief ANSI escape code to set the terminal color to green.
+#define STB_TEST_ANSI_OK "\033[32;49"
+#endif
+
+#ifndef STB_TEST_ANSI_KO
+/// @brief ANSI escape code to set the terminal color to red.
+#define STB_TEST_ANSI_KO "\033[31;49"
+#endif
+
+#ifndef STB_TEST_ANSI_REST
+/// @brief ANSI escape code to reset the terminal color to the default.
+#define STB_TEST_ANSI_REST "\033[39;49"
+#endif
+
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -78,7 +93,7 @@ STB_TEST_DEFINITION bool test_end(struct test *test, FILE *output);
 #define _stbtest_digit_count(n, base) ((n) == 0 ? 1 : (int)(log(n) / log(base)) + 1)
 
 struct test test_start(char const *name) {
-    return (struct test) {
+    return (struct test){
         .name = name,
         .cases = NULL,
     };
@@ -99,7 +114,7 @@ bool _stbtest_test_case(unsigned line, char const *file, struct test *test, bool
     va_end(ap);
 
     arrput(test->cases,
-        ((struct _stbtest_case) {
+        ((struct _stbtest_case){
             .ok = ok,
             .line = line,
             .expr = expr,
@@ -131,7 +146,7 @@ bool test_end(struct test *test, FILE *output) {
 
     // Print summary
     fprintf(output, "test %s: %d ko, %d ok, %d total: %s\n",
-        nb_ko == 0 ? "\033[32;49msuccess\033[39;49m" : "\033[31;49mfailure\033[39;49m",
+        nb_ko == 0 ? STB_TEST_ANSI_OK "success" STB_TEST_ANSI_REST : STB_TEST_ANSI_KO "failure" STB_TEST_ANSI_REST,
         nb_ko,
         nb_ok,
         nb_ko + nb_ok,
@@ -170,20 +185,20 @@ bool test_end(struct test *test, FILE *output) {
 
         for (i = 0; i < arrlenu(test->cases); ++i) {
             struct _stbtest_case const *const c = &test->cases[i];
-            char const *ok = c->ok ? "\033[32;49mOK\033[39;49m" : "\033[31;49mKO\033[39;49m";
-            if (c->expr)
-                fprintf(output, "%*d | %s | %-*s | %*u | %-*s | %-*s |\n",
-                    col_len_num, i, ok,
-                    col_len_file, c->file,
-                    col_len_line, c->line,
-                    col_len_expr, c->expr,
-                    col_len_name, c->name);
-            else
-                fprintf(output, "%*d | %s | %-*s | %*u | %s\n",
-                    col_len_num, i, ok,
-                    col_len_file, c->file,
-                    col_len_line, c->line,
-                    c->name);
+            char const *ok = c->ok ? STB_TEST_ANSI_OK "OK" STB_TEST_ANSI_REST
+                                     " : " STB_TEST_ANSI_KO "KO " STB_TEST_ANSI_REST;
+                                         if (c->expr)
+                                             fprintf(output, "%*d | %s | %-*s | %*u | %-*s | %-*s |\n",
+                                                 col_len_num, i, ok,
+                                                 col_len_file, c->file,
+                                                 col_len_line, c->line,
+                                                 col_len_expr, c->expr,
+                                                 col_len_name, c->name);
+                                         else fprintf(output, "%*d | %s | %-*s | %*u | %s\n",
+                                             col_len_num, i, ok,
+                                             col_len_file, c->file,
+                                             col_len_line, c->line,
+                                             c->name);
         }
     }
 
