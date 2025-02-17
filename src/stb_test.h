@@ -146,7 +146,9 @@ bool test_end(struct test *test, FILE *output) {
 
     // Print summary
     fprintf(output, "test %s: %d ko, %d ok, %d total: %s\n",
-        nb_ko == 0 ? STB_TEST_ANSI_OK "success" STB_TEST_ANSI_REST : STB_TEST_ANSI_KO "failure" STB_TEST_ANSI_REST,
+        nb_ko == 0
+            ? STB_TEST_ANSI_OK "success" STB_TEST_ANSI_REST
+            : STB_TEST_ANSI_KO "failure" STB_TEST_ANSI_REST,
         nb_ko,
         nb_ok,
         nb_ko + nb_ok,
@@ -185,20 +187,21 @@ bool test_end(struct test *test, FILE *output) {
 
         for (i = 0; i < arrlenu(test->cases); ++i) {
             struct _stbtest_case const *const c = &test->cases[i];
-            char const *ok = c->ok ? STB_TEST_ANSI_OK "OK" STB_TEST_ANSI_REST
-                                     " : " STB_TEST_ANSI_KO "KO " STB_TEST_ANSI_REST;
-                                         if (c->expr)
-                                             fprintf(output, "%*d | %s | %-*s | %*u | %-*s | %-*s |\n",
-                                                 col_len_num, i, ok,
-                                                 col_len_file, c->file,
-                                                 col_len_line, c->line,
-                                                 col_len_expr, c->expr,
-                                                 col_len_name, c->name);
-                                         else fprintf(output, "%*d | %s | %-*s | %*u | %s\n",
-                                             col_len_num, i, ok,
-                                             col_len_file, c->file,
-                                             col_len_line, c->line,
-                                             c->name);
+            char const *ok = c->ok
+                               ? STB_TEST_ANSI_OK "OK" STB_TEST_ANSI_REST
+                               : STB_TEST_ANSI_KO "KO" STB_TEST_ANSI_REST;
+            if (c->expr)
+                fprintf(output, "%*d | %s | %-*s | %*u | %-*s | %-*s |\n",
+                    col_len_num, i, ok,
+                    col_len_file, c->file,
+                    col_len_line, c->line,
+                    col_len_expr, c->expr,
+                    col_len_name, c->name);
+            else fprintf(output, "%*d | %s | %-*s | %*u | %s\n",
+                col_len_num, i, ok,
+                col_len_file, c->file,
+                col_len_line, c->line,
+                c->name);
         }
     }
 
