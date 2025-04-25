@@ -2,6 +2,7 @@
 /// @author 5cover (Scover)
 /// @brief Quick unit testing library
 /// @copyright Public Domain - The Unlicense
+/// @version 1.0.5
 /// @details
 /// See README.md for details and usage.
 
@@ -100,17 +101,19 @@ struct test test_start(char const *name) {
 }
 
 bool _stbtest_test_case(unsigned line, char const *file, struct test *test, bool ok, char const *expr, char const *fmt_name, ...) {
-    va_list ap;
+    va_list ap, ap1;
 
     va_start(ap, fmt_name);
-    size_t name_size = vsnprintf(NULL, 0, fmt_name, ap) + 1;
-    va_end(ap);
+    
+    va_copy(ap1, ap);
+    size_t name_size = vsnprintf(NULL, 0, fmt_name, ap1) + 1;
+    va_end(ap1);
 
     char *name = malloc(sizeof *name * name_size);
     if (!name) abort();
 
-    va_start(ap, fmt_name);
     vsnprintf(name, name_size, fmt_name, ap);
+
     va_end(ap);
 
     arrput(test->cases,
